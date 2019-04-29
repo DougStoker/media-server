@@ -10,7 +10,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start":"run-p start-server start-app",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
