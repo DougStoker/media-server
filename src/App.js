@@ -3,44 +3,90 @@ import React, { Component } from 'react';
 import './App.css';
 import searchIcon from './search.svg'
 
+import VideoPlayer from './vidPlayer.js'
+
 import io from 'socket.io-client';
+
+//████████████████████████████████████████████████
+//// address settings
+
+const VID_PORT = 3002
+const GUIDE_PORT = 3001
+//const APP_PORT = 3000
+const SERVE_ADDR = 'localhost'
+
+
+//████████████████████████████████████████████████
+
  
-const socket = io('localhost:3001',{agent: false,transport:['WebSocket']});
+const socket = io(`${SERVE_ADDR}:${GUIDE_PORT}`,{agent: false,transport:['WebSocket']});
+
+//████████████████████████████████████████████████
 
 
 class App extends Component {
     
     constructor(props){
         super(props)
-        this.state = {group:[],mediaType:'video',category:'all',search:""}    ////playing// 0: none,   1: video,   2: music,   3: game
+        this.state = {group:[],mediaType:'video',category:'all',search:"",playing:0,source:''}    ////playing// 0: none,   1: video,   2: music,   3: game
         
         socket.on('giving stuff',this.recieveStuff.bind(this))
+        socket.on('giving one thing',this.recieveOne)
+        socket.on('done',this.forceUpdate.bind(this))
         
-        this.requestStuff()
+        this.requestStuff('all',0)
         //socket.on('poke',this.requestStuff.bind(this)())       
-    }                               
+    }   
+
+    update=()=>{
+        this.forceUpdate()
+        console.log("got 'done'")
+    }
+
+    play =(source)=>{
+        console.log('source',source)
+        this.setState({playing:1,source:source})
+    }
+       
+    searchCallback=(searchfor,strsearch)=>{
+        this.requestStuff.bind(this)(searchfor,strsearch)
+    }
     
-    requestStuff(){
+    requestStuff(searchfor,strsearch){
+        this.setState.bind(this)({group:[]})
         console.log('asking for stuff')
-        if (this.state.search){
-            socket.emit('requesting search',this.state.search,this.state.mediaType)
+        if (strsearch/*this.state.search*/){
+            socket.emit('requesting search',/*this.state.search*/searchfor,this.state.mediaType)
         }
         else{
-            socket.emit('requesting category',this.state.category,this.state.mediaType)
+            socket.emit('requesting category',searchfor/*this.state.category*/,this.state.mediaType)
         }
     }
     
     recieveStuff(data){
-        console.log(`got ${data}`)
+        console.log(`got: ${data}`)
         this.setState.bind(this)({group:data})        
+    }
+
+    recieveOne=(data)=>{
+        console.log(`got a: ${data}`)
+        //this.setState({group:this.state.group.push(data)})   
+        this.state.group.push(data)
+        this.update()
     }
     
   
   render() {
+    if(this.state.playing){
+        //console.log(this.state.source)
+        return(
+            <VideoPlayerFrame source={this.state.source} parent={this}/>
+        )
+    }
     return (
       <div className="App">
         <MainBar/>
-        <FilterBar/>
+        <FilterBar parent={this}/>
         <ScrollyWindowThing parent={this}/>
       </div>
     );
@@ -168,6 +214,14 @@ class MainButton extends Component{
 }
 
 class FilterBar extends Component{
+    constructor(props){
+        super(props)
+        this.props = props
+    }
+    searchCallback=()=>{
+        
+        this.props.parent.searchCallback(this.input.value)
+    }
     render(){
         return(
             <div className='filterBar'>
@@ -186,9 +240,9 @@ class FilterBar extends Component{
                         <span> </span>
                 
                
-                    <input type='text' defaultValue='search' id='searchBox'/>
+                    <input type='text' defaultValue='search' id='searchBox' ref={(input) => this.input = input}/>
                     
-                    <button id='searchButton'>
+                    <button id='searchButton' onClick={this.searchCallback}>
                         <img src={searchIcon} className="searchIcon" alt="?"/>
                     </button>
                     
@@ -204,6 +258,9 @@ class ScrollyWindowThing extends Component{
         super(props)
         this.state = {}
     } 
+    play =(source)=>{
+        this.props.parent.play(source)
+    }
     render(){
         let tiles = []
         let group = this.props.parent.state.group
@@ -211,14 +268,16 @@ class ScrollyWindowThing extends Component{
             for (let movie of group){
                 tiles.push(
                     <MovieTile name={movie.name} description={movie.description} title={movie.title} 
-                        vidlength={movie.vidlength} image={movie.image} />
+                        vidlength={movie.vidlength} image={movie.image} parent={this}/>
                 
                 )
             }
         }
+
+        
         
         return(
-            <div>
+            <div className='mediaList'>
                 {tiles}
             </div>
         )
@@ -234,22 +293,96 @@ class MovieTile extends Component{
         super(props)
         this.props = props
         this.state = {}
-        this.state.title = ('title' in props) ? props.title : 'unknown'
+        this.state.title = ('name' in props) ? props.name : 'unknown'
         this.state.description = ('description' in props) ? props.description : 'unknown'
         this.state.vidlength = ('vidlength' in props) ? props.vidlength : 'unknown'
-        this.state.image = ('image' in props) ? props.vidlength : 'image'
+        this.state.image = ('image' in props) ? props.image: 'image'
+        this.state.key = ('title' in props) ? props.title : 'unknown'
+        //this.state.source = /*('source in props') ? props.source :*/ `localhost:3002/charlie.mp4`
+        this.state.filename = ('source' in props)? props.source : "charlie/index.m3u8"                 //"charlie.mp4"
+        this.state.url = `https://${SERVE_ADDR}:${VID_PORT}/${this.state.filename}`
+        this.state.expanded = false
+        this.parent = this.props.parent
+    }
+
+    expand =()=> {
+        this.setState({expanded: true})
+    }
+
+    contract =()=> {
+        this.setState({expanded: false})
+    }
+
+    play =()=>{
+        console.log(':::::',this.state.source)
+        this.parent.play/*.bind(this.parent)*/(this.state.url)
     }
     
     render(){
+        if(this.state.expanded){
+            return(
+                <div>
+                    <div className='shade' onClick={this.contract}></div>
+                    <div className='tileExpand'>
+                        <button onClick={this.contract} className='x'>✕</button>
+                        <button className='play' onClick={this.play}>Play ▶︎</button>
+                        <img src={this.state.image} alt='⊠'/>
+                        <h3>{this.state.title}</h3>
+                        <small>{this.state.vidlength}</small><br></br>
+                        <p>{this.state.description}</p>
+                    </div>
+                </div>
+                )
+        }
+
+        
+
+        //<!--<button>⋮</button>-->
+
+
         return(
-        <div>
-            <img src={this.state.image} alt=''/>
+        <div className='tile' onClick={this.expand}>
+            <img src={this.state.image} alt='⊠'/>
             <h3>{this.state.title}</h3>
-            <p>{this.state.vidlength}</p>
+            
+            <small>{this.state.vidlength}</small><br></br>
             <p>{this.state.description}</p>
         </div>
         )
     }   
+}
+
+
+class VideoPlayerFrame extends Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            image : props.image,
+
+        }
+        this.state.videoJsOptions = {
+            autoplay: false,
+            controls: true,
+            sources: [{
+              src: this.props.source/*'/path/to/video.mp4'*/,
+              type: 'application/x-mpegURL'
+            }]
+          }
+        //console.log(this.props.source)
+
+    }
+    render(){
+        return <VideoPlayer { ...this.state.videoJsOptions } />
+        /*(
+            <div>
+                <video controls preload='auto' width='640' height='264'
+                poster={this.props.image} data-setup='{}'>
+                    <source src={this.props.source} type='video/mp4'></source>
+                </video>
+            </div>
+
+        )*/
+    }
 }
 
 export default App;

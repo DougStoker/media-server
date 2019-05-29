@@ -1,3 +1,6 @@
+@import "../node_modules/video.js/dist/video-js.css";
+
+
 @font-face {
   font-family: 'Orbitron';
   src: url('./Orbitron-Regular.ttf')  format('truetype');
@@ -5,6 +8,106 @@
   /* src: url('./Orbitron-Bold.ttf')  format('truetype'); */
   /* src: url('./Orbitron-Medium.ttf')  format('truetype'); */
 }
+
+
+video{
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+
+
+.mediaList{
+    overflow-y: scroll;
+    height: auto;
+}
+
+.x{
+    background-color:transparent;
+    border: none;
+    float: right;
+
+}
+
+.play{
+    background-color: transparent;
+    border: 0.1em solid black; 
+    color: black;
+    float: right;
+
+}
+
+.play:hover{
+    border-color: red;
+    color:red;
+}
+
+
+
+.x:hover{
+    color: red;
+}
+
+.shade{
+    background-color: #88888888;
+    z-index: 2;
+    position: fixed;
+    left:0;
+    width: 100%;
+    top: 0;
+    height: 100%;
+}
+
+
+
+
+.tileExpand{
+    background-color: #cccccc;
+    z-index: 5;
+    border: 0.1em solid #999999;
+    display: inline-block;
+    padding: 0.5em;
+    font-size: 1em;
+    left: 15%;
+    right: 15%;
+    top: 15%;
+    bottom: 15%;
+    position: fixed;
+
+}
+
+
+.tile{
+    background-color: #cccccc;
+    border: 0.1em solid #999999;
+    display: inline-block;
+    padding: 0.5em;
+    font-size: 0.75em;
+    margin: 0.5em
+}
+
+.tile small{
+    text-align: right;
+    color: #333333;
+}
+
+.tile p{
+    display: inline;
+}
+
+.tile h3{
+    text-align: center;
+}
+
+.tile img{
+    display: inline-block;
+    border: 0.2em solid #999999;
+    width: 30%;
+    float:left;
+}
+
+
 
 body{
   font-family: 'Orbitron', sans-serif;
