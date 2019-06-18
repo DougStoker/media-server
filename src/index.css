@@ -1,4 +1,30 @@
-@import "../node_modules/video.js/dist/video-js.css";
+/* @import "../node_modules/video.js/dist/video-js.css"; */
+@import "video.css";
+
+
+
+body{
+    background-color: #444444;
+    /* display: flex;
+    flex-flow: column; */
+    height: 100%;
+    display: block;
+    min-height: 100%;
+    bottom: 100%;
+}
+
+#root{
+    min-height: 100%;
+    height: 100%;
+    flex-grow: 1;
+}
+
+.App{
+    background-color: white;
+    height: 100%;
+    flex-grow: 1;
+    
+}
 
 
 @font-face {
@@ -8,19 +34,44 @@
   /* src: url('./Orbitron-Bold.ttf')  format('truetype'); */
   /* src: url('./Orbitron-Medium.ttf')  format('truetype'); */
 }
+.video-js{
+    align-self: center;
+    justify-self: center;
+    left: 10%;
+    right: 90%;
+}
 
+.vjs-big-play-button{
+    /* justify-self: center;
+    align-self: center; */
+    left: 50%;
+    top: 50%;
 
-video{
+}
+.vidFrame{
+    align-self: center;
+    align-content: center;
+    justify-content: center;
+    background-color: #333333;
+}
+.vjs-tech { object-fit: cover; }
+
+.vidpage{
+    justify-content: center;
+}
+
+/*video{
     left: 0;
     top: 0;
     height: 100%;
     width: 100%;
-}
+}*/
 
 
 .mediaList{
     overflow-y: scroll;
     height: auto;
+    bottom: 0px;
 }
 
 .x{
@@ -101,7 +152,7 @@ video{
 }
 
 .tile img{
-    display: inline-block;
+    /*display: inline-block;*/
     border: 0.2em solid #999999;
     width: 30%;
     float:left;

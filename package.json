@@ -16,11 +16,8 @@
   "scripts": {
     "start": "",
     "start-all": "run-p start-server start-app",
-    "start-app": "react-scripts start",
-    "app": "react-scripts start",
-    "start-server": "cd server && nodemon server.js",
+    "app": "react-scripts start --ignore client",
     "server": "cd server && nodemon server.js",
-    "start-mongo": "cd mongodb-osx-x86_64-4.0.9/bin && ./mongod --dbpath=../../dbData",
     "mongo": "cd mongodb-osx-x86_64-4.0.9/bin && ./mongod --dbpath=../../dbData",
     "stop-mongo": "cd mongodb-osx-x86_64-4.0.9/bin && ./mongod --dbpath=../../dbData --shutdown",
     "start-mongo-client": "cd mongodb-osx-x86_64-4.0.9/bin && ./mongo",

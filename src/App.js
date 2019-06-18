@@ -79,9 +79,14 @@ class App extends Component {
   render() {
     if(this.state.playing){
         //console.log(this.state.source)
+        //className='vidpage'
+        document.body.style.backgroundColor = "#444444";
         return(
-            <VideoPlayerFrame source={this.state.source} parent={this}/>
+            <VideoPlayerFrame source={this.state.source} parent={this} />
         )
+    }
+    else{
+        document.body.style.backgroundColor = "white";
     }
     return (
       <div className="App">
@@ -300,7 +305,7 @@ class MovieTile extends Component{
         this.state.key = ('title' in props) ? props.title : 'unknown'
         //this.state.source = /*('source in props') ? props.source :*/ `localhost:3002/charlie.mp4`
         this.state.filename = ('source' in props)? props.source : "charlie/index.m3u8"                 //"charlie.mp4"
-        this.state.url = `https://${SERVE_ADDR}:${VID_PORT}/${this.state.filename}`
+        this.state.url = `http://${SERVE_ADDR}:${VID_PORT}/video/${this.state.filename}`
         this.state.expanded = false
         this.parent = this.props.parent
     }
@@ -364,9 +369,14 @@ class VideoPlayerFrame extends Component{
             autoplay: false,
             controls: true,
             sources: [{
-              src: this.props.source/*'/path/to/video.mp4'*/,
+              src: this.props.source,
               type: 'application/x-mpegURL'
-            }]
+            }],
+            html5:{
+                hls: {
+                    withCredentials: false
+                  }
+            }
           }
         //console.log(this.props.source)
 
