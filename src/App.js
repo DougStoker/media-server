@@ -1,28 +1,17 @@
 import React, { Component } from 'react';
-
 import './App.css';
 import searchIcon from './search.svg'
-
 import VideoPlayer from './vidPlayer.js'
-
 import io from 'socket.io-client';
-
 //████████████████████████████████████████████████
 //// address settings
-
 const VID_PORT = 3002
 const GUIDE_PORT = 3001
 //const APP_PORT = 3000
 const SERVE_ADDR = 'localhost'
-
-
 //████████████████████████████████████████████████
-
- 
 const socket = io(`${SERVE_ADDR}:${GUIDE_PORT}`,{agent: false,transport:['WebSocket']});
-
 //████████████████████████████████████████████████
-
 
 class App extends Component {
     
@@ -36,7 +25,14 @@ class App extends Component {
         
         this.requestStuff('all',0)
         //socket.on('poke',this.requestStuff.bind(this)())       
-    }   
+    }  
+    
+    changeMediaType = (newMediaType) =>{
+        if(newMediaType in ["video","game","music"]){
+            this.setState({mediaType: newMediaType})
+            this.requestStuff.bind(this)()
+        }
+    }
 
     update=()=>{
         this.forceUpdate()
@@ -90,7 +86,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <MainBar/>
+        <MainBar parent ={this}/>
         <FilterBar parent={this}/>
         <ScrollyWindowThing parent={this}/>
       </div>
@@ -101,7 +97,7 @@ class App extends Component {
 class MainBar extends Component {
     constructor(props){
         super(props)
-        this.state = {children:[[],[]],hideLastRow:1}
+        this.state = {children:[[],[]],hideLastRow:1/*,parent:props.parent*/}
     }
     
     hideLast(){
@@ -136,23 +132,25 @@ class MainBar extends Component {
             
         }
     }
-    
+    //classname="buttonGray"
     render(){
-        let gg = "true"
+        let gg = "false"//"true"
         let lastRow = /* this.state.hideLastRow ?*/ ( <div>
-                <MainButton gray={gg} name="Movies" parent={this} row="1"></MainButton>
-                <MainButton gray={gg} classname="buttonGray" name="Games" parent={this} row="1"></MainButton>
-                <MainButton gray={gg} classname="buttonGray" name="Music" parent={this} row="1"></MainButton>
+                <MainButton gray={gg} active='1' name="Movies" mtype="video" parent={this} grandparent={this.props.parent} row="1"></MainButton>
+                <MainButton gray={gg} name="Games" mtype="game" parent={this} grandparent={this.props.parent} row="1"></MainButton>
+                <MainButton gray={gg} name="Music" mtype="music" parent={this} grandparent={this.props.parent} row="1"></MainButton>
             </div>
         ) 
         
-        //console.log(`hideLastRow ${this.state.hideLastRow}`)
-        return(
-            <div className="mainBar">
-                <div>
+        //console.log(`hideLastRow ${this.state.hideLastRow}`)'
+            /*    <div>
                     <MainButton gray="false" name="Your Stuff" parent={this} row="0"></MainButton>
                     <MainButton gray="false" name="Browse" parent={this} row="0"></MainButton>
                 </div>
+            */
+        return(
+            <div className="mainBar">
+                
                 {lastRow}    
                 
             </div>
@@ -164,7 +162,7 @@ class MainButton extends Component{
     constructor(props){
         super(props)
         props.parent.addChild.bind(props.parent)(this,props.row)
-        this.state = {active:0,name:props.name,gray:props.gray}
+        this.state = {active:("active" in props? props.active: 0),name:props.name,gray:props.gray,mediaType:props.mtype}
         
     }
     
@@ -172,7 +170,7 @@ class MainButton extends Component{
         this.setState({active:1})
     }
     
-    turnOff(){
+    turnOff = () => {
         this.setState({active:0})
     }
     
@@ -189,11 +187,20 @@ class MainButton extends Component{
     click(){
         //console.log(this.props.parent.state.hideLastRow)
         //console.log(`button on row ${this.props.row}`)
+
+        /*if(this.state.name === "Your Stuff"){
+            alert("saving is currently unimplemented")
+            return
+        }*/
+
+        if(this.state.mediaType !== undefined){
+            this.props.grandparent.changeMediaType(this.state.mediaType)
+        }
+        
         if(this.state.active){
-            this.turnOff.bind(this)()
+            this.turnOff()//.bind(this)()
             // eslint-disable-next-line
             if(this.props.row == 0){
-                //console.log('row 0,')
                 this.props.parent.turnChildrenOff.bind(this.props.parent)(1)
                 this.props.parent.hideLast.bind(this.props.parent)()
             }
@@ -290,9 +297,6 @@ class ScrollyWindowThing extends Component{
     }
 }
 
-
-
-
 class MovieTile extends Component{
     constructor(props){
         super(props)
@@ -322,6 +326,11 @@ class MovieTile extends Component{
         console.log(':::::',this.state.source)
         this.parent.play/*.bind(this.parent)*/(this.state.url)
     }
+
+    toggleBookmark = () => {
+        //this.props.parent
+        this.setstate({bookmarked:(this.state.bookmarked?false:true)})
+    }
     
     render(){
         if(this.state.expanded){
@@ -331,6 +340,7 @@ class MovieTile extends Component{
                     <div className='tileExpand'>
                         <button onClick={this.contract} className='x'>✕</button>
                         <button className='play' onClick={this.play}>Play ▶︎</button>
+                        <button className='play' onclick={this.toggleBookmark}>{this.state.bookmarked ? "bookmark:▣ ": "bookmark:◻︎ "}</button>
                         <img src={this.state.image} alt='⊠'/>
                         <h3>{this.state.title}</h3>
                         <small>{this.state.vidlength}</small><br></br>
@@ -356,7 +366,6 @@ class MovieTile extends Component{
         )
     }   
 }
-
 
 class VideoPlayerFrame extends Component{
     constructor(props){
