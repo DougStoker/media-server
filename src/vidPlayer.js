@@ -26,7 +26,8 @@ export default class VideoPlayer extends React.Component {
     return (
          
         <div data-vjs-player>
-          <video ref={ node => this.videoNode = node } className="video-js vjs-default-skin" data-setup={{"fluid": true}}></video>
+          <video ref={ node => this.videoNode = node } className="video-js vjs-default-skin" 
+          data-setup={{"fluid": true}} width="90%" height="auto"></video>
         </div>
       
     )

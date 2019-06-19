@@ -245,7 +245,8 @@ body{
     font-size: 2em;
     background-color: #27254E;
     border: 2px solid #27254E;
-    color: #7E7ABD;
+    /*color: #7E7ABD;*/
+    color: #5e5d7b;
     margin: 0px;
     overflow: hidden;
     font-family: 'Orbitron', sans-serif;

@@ -127,18 +127,18 @@ class MainBar extends Component {
     
     turnChildrenOff(row){
         for(let child of this.state.children[row]){
-            child.turnOff.bind(child)()
-            child.gray.bind(child)() 
+            child.turnOff()//.bind(child)()
+            //child.gray()//.bind(child)() 
             
         }
     }
     //classname="buttonGray"
     render(){
-        let gg = "false"//"true"
+        //let gg = "false"//"true"//gray={gg}
         let lastRow = /* this.state.hideLastRow ?*/ ( <div>
-                <MainButton gray={gg} active='1' name="Movies" mtype="video" parent={this} grandparent={this.props.parent} row="1"></MainButton>
-                <MainButton gray={gg} name="Games" mtype="game" parent={this} grandparent={this.props.parent} row="1"></MainButton>
-                <MainButton gray={gg} name="Music" mtype="music" parent={this} grandparent={this.props.parent} row="1"></MainButton>
+                <MainButton active='1' name="Movies" mtype="video" parent={this} grandparent={this.props.parent} row="1"></MainButton>
+                <MainButton name="Games" mtype="game" parent={this} grandparent={this.props.parent} row="1"></MainButton>
+                <MainButton name="Music" mtype="music" parent={this} grandparent={this.props.parent} row="1"></MainButton>
             </div>
         ) 
         
@@ -162,11 +162,11 @@ class MainButton extends Component{
     constructor(props){
         super(props)
         props.parent.addChild.bind(props.parent)(this,props.row)
-        this.state = {active:("active" in props? props.active: 0),name:props.name,gray:props.gray,mediaType:props.mtype}
+        this.state = {active:("active" in props? props.active: 0),name:props.name/*,gray:falseprops.gray*/,mediaType:props.mtype}
         
     }
     
-    turnOn(){
+    turnOn = () => {
         this.setState({active:1})
     }
     
@@ -174,17 +174,17 @@ class MainButton extends Component{
         this.setState({active:0})
     }
     
-    gray(){
+    /*gray(){
         this.setState({gray:true})
         this.forceUpdate()
-    }
+    }*/
     
-    unGray(){
+    /*unGray = () => {
         this.setState({gray:false})
         this.forceUpdate()
-    }
+    }*/
     
-    click(){
+    click = () => {
         //console.log(this.props.parent.state.hideLastRow)
         //console.log(`button on row ${this.props.row}`)
 
@@ -197,19 +197,19 @@ class MainButton extends Component{
             this.props.grandparent.changeMediaType(this.state.mediaType)
         }
         
-        if(this.state.active){
-            this.turnOff()//.bind(this)()
+        //if(this.state.active){
+            //this.turnOff()//.bind(this)()
             // eslint-disable-next-line
-            if(this.props.row == 0){
-                this.props.parent.turnChildrenOff.bind(this.props.parent)(1)
-                this.props.parent.hideLast.bind(this.props.parent)()
-            }
-        }
-        else{
+            //if(this.props.row == 0){
+            //    this.props.parent.turnChildrenOff.bind(this.props.parent)(1)
+            //    this.props.parent.hideLast.bind(this.props.parent)()
+            //}
+        //}{
+        if( ! this.state.active){//else{
             // eslint-disable-next-line
-            if(this.props.row == 0){
-                this.props.parent.showLast.bind(this.props.parent)()
-            }
+            //if(this.props.row == 0){
+                //this.props.parent.showLast.bind(this.props.parent)()
+            //}
             
             this.props.parent.turnChildrenOff.bind(this.props.parent)(this.props.row)
             
@@ -218,7 +218,7 @@ class MainButton extends Component{
     }
     render(){
         return(
-            <button className={this.state.gray?"buttonGray":(this.state.active?"buttonPressed":"mainButton")} onClick={this.click.bind(this)}>
+            <button className={/*this.state.gray?"buttonGray":*/(this.state.active?"buttonPressed":"mainButton")} onClick={this.click}>
                 {this.state.name}
             </button>
         )
