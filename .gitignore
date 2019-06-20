@@ -25,3 +25,5 @@ dbData/journal/WiredTigerLog.0000000002
 dbData/journal/WiredTigerLog.0000000001
 dbData/journal/WiredTigerLog.0000000004
 
+dbData/diagnostic.data/metrics.interim
+dbData/diagnostic.data/metrics.2019-06-15T20-08-24Z-00000
