@@ -23,8 +23,7 @@ class App extends Component {
         socket.on('giving one thing',this.recieveOne)
         socket.on('done',this.forceUpdate.bind(this))
         
-        this.requestStuff('all',0)
-        //socket.on('poke',this.requestStuff.bind(this)())       
+        this.requestStuff('all',0)      
     }  
     
     changeMediaType = (newMediaType) =>{
@@ -66,8 +65,7 @@ class App extends Component {
     }
 
     recieveOne=(data)=>{
-        console.log(`got a: ${data}`)
-        //this.setState({group:this.state.group.push(data)})   
+        console.log(`got a: ${data}`) 
         this.state.group.push(data)
         this.update()
     }
@@ -75,8 +73,6 @@ class App extends Component {
   
   render() {
     if(this.state.playing){
-        //console.log(this.state.source)
-        //className='vidpage'
         document.body.style.backgroundColor = "#444444";
         return(
             <VideoPlayerFrame source={this.state.source} parent={this} />
@@ -98,63 +94,25 @@ class App extends Component {
 class MainBar extends Component {
     constructor(props){
         super(props)
-        this.state = {children:[[],[]],hideLastRow:1/*,parent:props.parent*/}
+        this.state = {children:[[],[]],}
     }
-    
-    hideLast(){
-        //this.state.hideLastRow = 1
-        this.setState.bind(this)({hideLastRow:1})
-        for(let child of this.state.children[1]){
-            child.gray.bind(child)()            
-        }
-        this.forceUpdate()
-    }
-    
-    showLast(){
-        //this.state.hideLastRow = 0
-        this.setState.bind(this)({hideLastRow:0})
-        for(let child of this.state.children[1]){
-            child.unGray.bind(child)()            
-        }
-        this.forceUpdate()
-    }
-    
-    
-    
+
     addChild(thing,row){
-        this.state.children[row].push(thing)
-        
+        this.state.children[row].push(thing)   
     }
     
     turnChildrenOff(row){
         for(let child of this.state.children[row]){
-            child.turnOff()//.bind(child)()
-            //child.gray()//.bind(child)() 
-            
+            child.turnOff()
         }
     }
-    //classname="buttonGray"
     render(){
-        //let gg = "false"//"true"//gray={gg}
-        let lastRow = /* this.state.hideLastRow ?*/ ( <div>
-                <MainButton active='1' name="Movies" mtype="video" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
-                <MainButton name="Games" mtype="game" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
-                <MainButton name="Music" mtype="music" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
-            </div>
-        ) 
-        
-        //console.log(`hideLastRow ${this.state.hideLastRow}`)'
-            /*    <div>
-                    <MainButton gray="false" name="Your Stuff" parent={this} row="0"></MainButton>
-                    <MainButton gray="false" name="Browse" parent={this} row="0"></MainButton>
-                </div>
-            */
         return(
-            <div className="mainBar">
-                
-                {lastRow}    
-                
-            </div>
+            <div className="mainBar"><div>
+                    <MainButton active='1' name="Movies" mtype="video" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
+                    <MainButton name="Games" mtype="game" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
+                     <MainButton name="Music" mtype="music" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
+                </div></div>
         )
     }
 }
@@ -163,7 +121,7 @@ class MainButton extends Component{
     constructor(props){
         super(props)
         props.parent.addChild.bind(props.parent)(this,props.row)
-        this.state = {active:("active" in props? props.active: 0),name:props.name/*,gray:falseprops.gray*/,mediaType:props.mtype}
+        this.state = {active:("active" in props? props.active: 0),name:props.name,mediaType:props.mtype}
         
     }
     
@@ -174,52 +132,19 @@ class MainButton extends Component{
     turnOff = () => {
         this.setState({active:0})
     }
-    
-    /*gray(){
-        this.setState({gray:true})
-        this.forceUpdate()
-    }*/
-    
-    /*unGray = () => {
-        this.setState({gray:false})
-        this.forceUpdate()
-    }*/
-    
+
     click = () => {
-        //console.log(this.props.parent.state.hideLastRow)
-        //console.log(`button on row ${this.props.row}`)
-
-        /*if(this.state.name === "Your Stuff"){
-            alert("saving is currently unimplemented")
-            return
-        }*/
-
         if(this.state.mediaType !== undefined){
-            this.props./*grandparent.*/changeMediaType(this.state.mediaType)
+            this.props.changeMediaType(this.state.mediaType)
         }
-        
-        //if(this.state.active){
-            //this.turnOff()//.bind(this)()
-            // eslint-disable-next-line
-            //if(this.props.row == 0){
-            //    this.props.parent.turnChildrenOff.bind(this.props.parent)(1)
-            //    this.props.parent.hideLast.bind(this.props.parent)()
-            //}
-        //}{
-        if( ! this.state.active){//else{
-            // eslint-disable-next-line
-            //if(this.props.row == 0){
-                //this.props.parent.showLast.bind(this.props.parent)()
-            //}
-            
-            this.props.parent.turnChildrenOff.bind(this.props.parent)(this.props.row)
-            
+        if( ! this.state.active){           
+            this.props.parent.turnChildrenOff.bind(this.props.parent)(this.props.row)           
             this.turnOn.bind(this)()
         }
     }
     render(){
         return(
-            <button className={/*this.state.gray?"buttonGray":*/(this.state.active?"buttonPressed":"mainButton")} onClick={this.click}>
+            <button className={(this.state.active?"buttonPressed":"mainButton")} onClick={this.click}>
                 {this.state.name}
             </button>
         )
@@ -238,29 +163,18 @@ class FilterBar extends Component{
     render(){
         return(
             <div className='filterBar'>
-                        <span> </span>
-                    
-                        <select id='selectBox'>
-                        
-                            <option value="allCategories">all categories</option>
-                            <option value="action">action</option>
-                            <option value="adventure">adventure</option>
-                            <option value="comedy">comedy</option>
-                     
-                        </select> 
-                        
-                    
-                        <span> </span>
-                
-               
-                    <input type='text' defaultValue='search' id='searchBox' ref={(input) => this.input = input}/>
-                    
-                    <button id='searchButton' onClick={this.searchCallback}>
-                        <img src={searchIcon} className="searchIcon" alt="?"/>
-                    </button>
-                    
-                   
-                
+                <span></span>                  
+                <select id='selectBox'>                      
+                    <option value="allCategories">all categories</option>
+                    <option value="action">action</option>
+                    <option value="adventure">adventure</option>
+                    <option value="comedy">comedy</option>                 
+                </select> 
+                <span></span>
+                <input type='text' defaultValue='search' id='searchBox' ref={(input) => this.input = input}/>
+                <button id='searchButton' onClick={this.searchCallback}>
+                    <img src={searchIcon} className="searchIcon" alt="?"/>
+                </button>
             </div>
         )
     }
@@ -308,7 +222,7 @@ class MovieTile extends Component{
         this.state.vidlength = ('vidlength' in props) ? props.vidlength : 'unknown'
         this.state.image = ('image' in props) ? props.image: 'image'
         this.state.key = ('title' in props) ? props.title : 'unknown'
-        //this.state.source = /*('source in props') ? props.source :*/ `localhost:3002/charlie.mp4`
+  
         this.state.filename = ('source' in props)? props.source+'/index.m3u8' : "charlie/index.m3u8"                 //"charlie.mp4"
         this.state.url = `http://${SERVE_ADDR}:${VID_PORT}/video/${this.state.filename}`
         this.state.expanded = false
@@ -393,15 +307,6 @@ class VideoPlayerFrame extends Component{
     }
     render(){
         return <VideoPlayer { ...this.state.videoJsOptions } />
-        /*(
-            <div>
-                <video controls preload='auto' width='640' height='264'
-                poster={this.props.image} data-setup='{}'>
-                    <source src={this.props.source} type='video/mp4'></source>
-                </video>
-            </div>
-
-        )*/
     }
 }
 
