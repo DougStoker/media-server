@@ -30,6 +30,7 @@ class App extends Component {
     changeMediaType = (newMediaType) =>{
         if(newMediaType in ["video","game","music"]){
             this.setState({mediaType: newMediaType})
+            this.forceUpdate()
             this.requestStuff.bind(this)()
         }
     }
@@ -136,9 +137,9 @@ class MainBar extends Component {
     render(){
         //let gg = "false"//"true"//gray={gg}
         let lastRow = /* this.state.hideLastRow ?*/ ( <div>
-                <MainButton active='1' name="Movies" mtype="video" parent={this} grandparent={this.props.parent} row="1"></MainButton>
-                <MainButton name="Games" mtype="game" parent={this} grandparent={this.props.parent} row="1"></MainButton>
-                <MainButton name="Music" mtype="music" parent={this} grandparent={this.props.parent} row="1"></MainButton>
+                <MainButton active='1' name="Movies" mtype="video" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
+                <MainButton name="Games" mtype="game" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
+                <MainButton name="Music" mtype="music" parent={this} grandparent={this.props.parent} changeMediaType={this.props.parent.changeMediaType} row="1"></MainButton>
             </div>
         ) 
         
@@ -194,7 +195,7 @@ class MainButton extends Component{
         }*/
 
         if(this.state.mediaType !== undefined){
-            this.props.grandparent.changeMediaType(this.state.mediaType)
+            this.props./*grandparent.*/changeMediaType(this.state.mediaType)
         }
         
         //if(this.state.active){
@@ -308,7 +309,7 @@ class MovieTile extends Component{
         this.state.image = ('image' in props) ? props.image: 'image'
         this.state.key = ('title' in props) ? props.title : 'unknown'
         //this.state.source = /*('source in props') ? props.source :*/ `localhost:3002/charlie.mp4`
-        this.state.filename = ('source' in props)? props.source : "charlie/index.m3u8"                 //"charlie.mp4"
+        this.state.filename = ('source' in props)? props.source+'/index.m3u8' : "charlie/index.m3u8"                 //"charlie.mp4"
         this.state.url = `http://${SERVE_ADDR}:${VID_PORT}/video/${this.state.filename}`
         this.state.expanded = false
         this.parent = this.props.parent
