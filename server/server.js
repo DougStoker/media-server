@@ -54,8 +54,8 @@ const onConnectFunc = function(socket){
             if(oof){print(oof)}
             let category = data
             let mediaType = 'video'//data[1]
-            let returns = []
-            if(client != undefined){  
+            //let returns = []
+            if(client !== undefined){  
                 let Db = client.db('test')
                 print("''''''''''") 
                 let foundIter = function(doc){

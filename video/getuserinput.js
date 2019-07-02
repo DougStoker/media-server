@@ -32,7 +32,7 @@ readline.question('enter name of the video folder:',(folderName)=>{
     readline.question('enter title of video:', (title)=>{
         doc.write('title',title)
         readline.question('enter name of thumbnail:',(thumb)=>{
-            doc.write('image',thumb)
+            doc.write('image',`images/${thumb}`)
             readline.question('enter description of video:',(desc)=>{
                 doc.write('description',desc)
                 readline.question('enter length of video:',(length)=>{

@@ -26,11 +26,17 @@ class App extends Component {
         this.requestStuff('all',0)      
     }  
     
+    lookatCategory =(event)=> {
+        this.setState({category:event})
+        this.forceUpdate()
+        this.requestStuff()
+    }
+
     changeMediaType = (newMediaType) =>{
-        if(newMediaType in ["video","game","music"]){
+        if(/*newMediaType in ["video","game","music"]*/true){
             this.setState({mediaType: newMediaType})
             this.forceUpdate()
-            this.requestStuff.bind(this)()
+            this.requestStuff(newMediaType,false)//.bind(this)()
         }
     }
 
@@ -48,13 +54,15 @@ class App extends Component {
         this.requestStuff.bind(this)(searchfor,strsearch)
     }
     
-    requestStuff(searchfor,strsearch){
+    requestStuff =(searchfor,strsearch)=> {
         this.setState.bind(this)({group:[]})
         console.log('asking for stuff')
         if (strsearch/*this.state.search*/){
             socket.emit('requesting search',/*this.state.search*/searchfor,this.state.mediaType)
+            console.log(111111)
         }
         else{
+            console.log(2222222)
             socket.emit('requesting category',searchfor/*this.state.category*/,this.state.mediaType)
         }
     }
@@ -164,7 +172,7 @@ class FilterBar extends Component{
         return(
             <div className='filterBar'>
                 <span></span>                  
-                <select id='selectBox'>                      
+                <select id='selectBox' onChange={this.props.parent.lookatCategory}>                      
                     <option value="allCategories">all categories</option>
                     <option value="action">action</option>
                     <option value="adventure">adventure</option>
@@ -217,7 +225,7 @@ class MovieTile extends Component{
         super(props)
         this.props = props
         this.state = {}
-        this.state.title = ('name' in props) ? props.name : 'unknown'
+        this.state.title = (/*'title' in props*/ props.title !== undefined) ? props.title :((props.name !== undefined) ? props.name :  'unknown')
         this.state.description = ('description' in props) ? props.description : 'unknown'
         this.state.vidlength = ('vidlength' in props) ? props.vidlength : 'unknown'
         this.state.image = ('image' in props) ? props.image: 'image'
@@ -249,14 +257,14 @@ class MovieTile extends Component{
     
     render(){
         if(this.state.expanded){
+            //<button className='play' onclick={this.toggleBookmark}>{this.state.bookmarked ? "bookmark:▣ ": "bookmark:◻︎ "}</button>
             return(
                 <div>
                     <div className='shade' onClick={this.contract}></div>
                     <div className='tileExpand'>
                         <button onClick={this.contract} className='x'>✕</button>
                         <button className='play' onClick={this.play}>Play ▶︎</button>
-                        <button className='play' onclick={this.toggleBookmark}>{this.state.bookmarked ? "bookmark:▣ ": "bookmark:◻︎ "}</button>
-                        <img src={this.state.image} alt='⊠'/>
+                        <img height="256" src={this.state.image} alt='⊠'/>
                         <h3>{this.state.title}</h3>
                         <small>{this.state.vidlength}</small><br></br>
                         <p>{this.state.description}</p>
